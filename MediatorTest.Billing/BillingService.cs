@@ -8,12 +8,16 @@ public static class BillingExtensions
     public static IServiceCollection AddBillingServices(this IServiceCollection services)
     {
         services.AddScoped<IBillingService, BillingHandler>();
+        
+        services.AddDbContext<BillingDbContext>(options => options.UseInMemoryDatabase("BillingDb"));
+        
         return services;
     }
     
     public static WebApplication UseBillingEndpoints(this WebApplication app)
     {
         app.MapGet("/billing", (IBillingService billingService) => billingService.GetBillingInfo());
+        app.MapPost("/billing", (IBillingService billingService) => billingService.AddBillingInfo());
         
         return app;
     }
@@ -21,17 +25,28 @@ public static class BillingExtensions
 
 public interface IBillingService
 {
-    BillingContract GetBillingInfo();
+    Task<BillingContract> GetBillingInfo();
+    Task AddBillingInfo();
 }
 
-public class BillingHandler: IBillingService
+public class BillingHandler(BillingDbContext context): IBillingService
 {
-    public BillingContract GetBillingInfo()
+    public async Task<BillingContract> GetBillingInfo()
     {
+        var billingCount = await context.Billings.CountAsync();
+        
         return new BillingContract
         {
-            BillingMessage = "This is billing info from Billing Service"
+            BillingMessage = "This is billing info from Billing Service",
+            BillingCount = billingCount,
         };
+    }
+    
+    public async Task AddBillingInfo()
+    {
+        var billingEntity = new BillingEntity();
+        context.Billings.Add(billingEntity);
+        await context.SaveChangesAsync();
     }
 }
 
