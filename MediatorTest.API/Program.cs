@@ -1,4 +1,5 @@
 using MediatorTest.Billing;
+using MediatorTest.Mediator;
 using MediatorTest.Orders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddOrdersServices();
 builder.Services.AddBillingServices();
+
+builder.Services.AddMediatorServices();
 
 var app = builder.Build();
 

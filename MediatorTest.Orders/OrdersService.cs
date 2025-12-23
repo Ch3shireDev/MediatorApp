@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatorTest.Mediator;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatorTest.Orders;
@@ -28,7 +29,7 @@ public interface IOrdersService
     Task AddOrdersInfo();
 }
 
-public class OrdersHandler(OrdersDbContext context) : IOrdersService
+public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrdersService
 {
     public async Task<OrdersContract> GetOrdersInfo()
     {
@@ -38,6 +39,7 @@ public class OrdersHandler(OrdersDbContext context) : IOrdersService
         {
             OrdersMessage = "This is orders info from Orders Service",
             OrdersCount = ordersCount,
+            BillingCount = await mediator.GetBillingCount(),
         };
     }
 
@@ -53,6 +55,7 @@ public class OrdersContract
 {
     public string OrdersMessage { get; set; } = "";
     public int OrdersCount { get; set; } = 0;
+    public int BillingCount { get; set; } = 0;
 }
 
 public class OrdersDbContext(DbContextOptions<OrdersDbContext> options) : DbContext(options)

@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MediatorTest.Billing\MediatorTest.Billing.csproj" />
+      <ProjectReference Include="..\MediatorTest.Mediator\MediatorTest.Mediator.csproj" />
       <ProjectReference Include="..\MediatorTest.Orders\MediatorTest.Orders.csproj" />
     </ItemGroup>
 

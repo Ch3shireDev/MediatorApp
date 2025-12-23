@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatorTest.Mediator;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatorTest.Billing;
@@ -29,7 +30,7 @@ public interface IBillingService
     Task AddBillingInfo();
 }
 
-public class BillingHandler(BillingDbContext context): IBillingService
+public class BillingHandler(BillingDbContext context, IMediator mediator): IBillingService
 {
     public async Task<BillingContract> GetBillingInfo()
     {
@@ -39,6 +40,7 @@ public class BillingHandler(BillingDbContext context): IBillingService
         {
             BillingMessage = "This is billing info from Billing Service",
             BillingCount = billingCount,
+            OrdersCount = await mediator.GetOrdersCount(),
         };
     }
     
