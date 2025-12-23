@@ -1,13 +1,15 @@
-using System.Reflection;
 using ArchUnitNET.Domain;
+using ArchUnitNET.Fluent;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnit;
-using Xunit;
+using Assembly = System.Reflection.Assembly;
 
-public class ModuleBoundariesTests
+namespace MediatorTest.Tests.Integration;
+
+public class ArchTests
 {
-    private static readonly Assembly BillingAssembly = typeof(MediatorTest.Billing.AssemblyMarker).Assembly;
-    private static readonly Assembly OrdersAssembly  = typeof(MediatorTest.Orders.AssemblyMarker).Assembly;
+    private static readonly Assembly BillingAssembly = typeof(MediatorTest.Billing.BillingHandler).Assembly;
+    private static readonly Assembly OrdersAssembly  = typeof(MediatorTest.Orders.OrdersHandler).Assembly;
 
     private static readonly Architecture Architecture =
         new ArchLoader()

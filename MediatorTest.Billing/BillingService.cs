@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatorTest.Billing;
 
@@ -37,4 +38,16 @@ public class BillingHandler: IBillingService
 public class BillingContract
 {
     public string BillingMessage { get; set; } = "";
+    public int BillingCount { get; set; } = 0;
+    public int OrdersCount { get; set; } = 0;
+}
+
+public class BillingDbContext(DbContextOptions<BillingDbContext> options) : DbContext(options)
+{
+    public DbSet<BillingEntity> Billings { get; set; }
+}
+
+public class BillingEntity
+{
+    public int Id { get; set; }
 }
