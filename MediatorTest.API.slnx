@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="MediatorTest.API/MediatorTest.API.csproj" />
+  <Project Path="MediatorTest.Billing/MediatorTest.Billing.csproj" />
+  <Project Path="MediatorTest.Orders/MediatorTest.Orders.csproj" />
+  <Project Path="MediatorTest.Tests.Integration/MediatorTest.Tests.Integration.csproj" />
+</Solution>
