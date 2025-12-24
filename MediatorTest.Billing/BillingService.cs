@@ -10,7 +10,7 @@ public static class BillingExtensions
     public static IServiceCollection AddBillingServices(this IServiceCollection services)
     {
         services.AddScoped<IBillingService, BillingHandler>();
-        services.AddScoped<IProvider<BillingRequest, int>, BillingHandler>();
+        services.AddScoped<IQueryHandler<BillingRequest, int>, BillingHandler>();
 
         services.AddDbContext<BillingDbContext>(options => options.UseInMemoryDatabase("BillingDb"));
 
@@ -33,7 +33,7 @@ public interface IBillingService
 }
 
 public class BillingHandler(BillingDbContext context, IMediator mediator)
-    : IBillingService, IProvider<BillingRequest, int>
+    : IBillingService, IQueryHandler<BillingRequest, int>
 {
     public async Task<BillingContract> GetBillingInfo()
     {

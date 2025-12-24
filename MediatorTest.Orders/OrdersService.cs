@@ -11,7 +11,7 @@ public static class OrdersExtensions
     public static IServiceCollection AddOrdersServices(this IServiceCollection services)
     {
         services.AddScoped<IOrdersService, OrdersHandler>();
-        services.AddScoped<IProvider<OrdersRequest, int>, OrdersHandler>();
+        services.AddScoped<IQueryHandler<OrdersRequest, int>, OrdersHandler>();
         services.AddDbContext<OrdersDbContext>(options => options.UseInMemoryDatabase("OrdersDb"));
 
         return services;
@@ -32,7 +32,7 @@ public interface IOrdersService
     Task AddOrdersInfo();
 }
  
-public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrdersService, IProvider<OrdersRequest,int>
+public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrdersService, IQueryHandler<OrdersRequest,int>
 {
     public async Task<OrdersContract> GetOrdersInfo()
     {
