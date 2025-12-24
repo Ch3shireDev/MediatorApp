@@ -9,6 +9,7 @@ public static class OrdersExtensions
     public static IServiceCollection AddOrdersServices(this IServiceCollection services)
     {
         services.AddScoped<IOrdersService, OrdersHandler>();
+        services.AddScoped<IOrdersProvider, OrdersHandler>();
         services.AddDbContext<OrdersDbContext>(options => options.UseInMemoryDatabase("OrdersDb"));
 
         return services;
@@ -29,7 +30,7 @@ public interface IOrdersService
     Task AddOrdersInfo();
 }
 
-public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrdersService
+public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrdersService, IOrdersProvider
 {
     public async Task<OrdersContract> GetOrdersInfo()
     {
@@ -48,6 +49,11 @@ public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrder
         var orderEntity = new OrderEntity();
         context.Orders.Add(orderEntity);
         await context.SaveChangesAsync();
+    }
+
+    public Task<int> GetOrdersCount()
+    {
+        return context.Orders.CountAsync();
     }
 }
 
