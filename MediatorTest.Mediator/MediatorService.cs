@@ -10,27 +10,24 @@ public static class MediatorExtensions
     }
 }
 
-public interface IOrdersProvider
+public interface IQuery<TResponse>;
+
+public interface IMediator
 {
-    Task<int> GetOrdersCount();
+    Task<TResponse> GetResponse<TResponse>(IQuery<TResponse> query);
 }
 
-public interface IBillingProvider
+public interface IProvider<in TQuery, TResponse> where TQuery : IQuery<TResponse>
 {
-    Task<int> GetBillingCount();
+    Task<TResponse> GetResponse(TQuery query);
 }
-
-public interface IMediator : IOrdersProvider, IBillingProvider;
 
 public class Mediator(IServiceProvider serviceProvider) : IMediator
 {
-    public Task<int> GetOrdersCount()
+    public Task<TResponse> GetResponse<TResponse>(IQuery<TResponse> query)
     {
-        return serviceProvider.GetRequiredService<IOrdersProvider>().GetOrdersCount();
-    }
-
-    public Task<int> GetBillingCount()
-    {
-        return serviceProvider.GetRequiredService<IBillingProvider>().GetBillingCount();
+        var providerType = typeof(IProvider<,>).MakeGenericType(query.GetType(), typeof(TResponse));
+        dynamic provider = serviceProvider.GetRequiredService(providerType);
+        return provider.GetResponse((dynamic)query);
     }
 }

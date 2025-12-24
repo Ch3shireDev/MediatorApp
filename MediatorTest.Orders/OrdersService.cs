@@ -1,15 +1,17 @@
-﻿using MediatorTest.Mediator;
+﻿using MediatorTest.Billing.Contracts;
+using MediatorTest.Mediator;
+using MediatorTest.Orders.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatorTest.Orders;
-
+ 
 public static class OrdersExtensions
 {
     public static IServiceCollection AddOrdersServices(this IServiceCollection services)
     {
         services.AddScoped<IOrdersService, OrdersHandler>();
-        services.AddScoped<IOrdersProvider, OrdersHandler>();
+        services.AddScoped<IProvider<OrdersRequest, int>, OrdersHandler>();
         services.AddDbContext<OrdersDbContext>(options => options.UseInMemoryDatabase("OrdersDb"));
 
         return services;
@@ -29,8 +31,8 @@ public interface IOrdersService
     Task<OrdersContract> GetOrdersInfo();
     Task AddOrdersInfo();
 }
-
-public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrdersService, IOrdersProvider
+ 
+public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrdersService, IProvider<OrdersRequest,int>
 {
     public async Task<OrdersContract> GetOrdersInfo()
     {
@@ -40,7 +42,7 @@ public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrder
         {
             OrdersMessage = "This is orders info from Orders Service",
             OrdersCount = ordersCount,
-            BillingCount = await mediator.GetBillingCount(),
+            BillingCount = await mediator.GetResponse(new BillingRequest())
         };
     }
 
@@ -54,6 +56,11 @@ public class OrdersHandler(OrdersDbContext context, IMediator mediator) : IOrder
     public Task<int> GetOrdersCount()
     {
         return context.Orders.CountAsync();
+    }
+
+    public Task<int> GetResponse(OrdersRequest query)
+    {
+        return GetOrdersCount();
     }
 }
 

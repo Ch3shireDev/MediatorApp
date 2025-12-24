@@ -3,7 +3,6 @@ using FluentAssertions;
 using MediatorTest.Billing;
 using MediatorTest.Orders;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatorTest.Tests.Integration;
@@ -114,31 +113,5 @@ public class MediatorAppTests : IClassFixture<WebApplicationFactory<Program>>
         billingResponse.OrdersCount.Should().Be(2);
         billingResponse.BillingCount.Should().Be(3);
         
-    }
-}
-
-internal class OrdersContract
-{
-    public string OrdersMessage { get; set; } = "";
-    public int OrdersCount { get; set; } = 0;
-    public int BillingCount { get; set; } = 0;
-}
-
-internal class BillingContract
-{
-    public string BillingMessage { get; set; } = "";
-    public int BillingCount { get; set; } = 0;
-    public int OrdersCount { get; set; } = 0;
-}
-
-public static class DbContextBuilder
-{
-    public static T CreateDbContext<T>() where T : DbContext
-    {
-        var options = new DbContextOptionsBuilder<T>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-        
-        return (T)Activator.CreateInstance(typeof(T), options)!;
     }
 }
